@@ -1,1 +1,1 @@
-entry  | index.html
+entry  | premium.html
