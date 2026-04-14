@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Premium Hub · v1.6.8</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --a: #4f9eff; --a2: #7b6ff0; --gold: #f5c842;
+      --tx: #e8edf5; --mu: #8890b0;
+      --g2: rgba(14,22,38,0.82); --bd: rgba(255,255,255,0.08);
+      --bar: 56px; --ez: cubic-bezier(0.2,0.9,0.4,1);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; font-family: 'DM Sans', sans-serif; color: var(--tx); background: #07101a; }
+    #bga, #bgb { position: fixed; inset: 0; z-index: 0; background-size: cover; background-position: center; transition: opacity 0.9s ease; }
+    #bga { opacity: 1; } #bgb { opacity: 0; }
+    #bgd { position: fixed; inset: 0; z-index: 1; background: linear-gradient(160deg,rgba(3,7,16,.72),rgba(3,7,16,.4) 60%,rgba(3,7,16,.88)); pointer-events: none; }
+    #stc { position: fixed; inset: 0; z-index: 2; pointer-events: none; opacity: 0; transition: opacity 1s; }
+    #stc.on { opacity: 1; }
+    #svc { position: fixed; inset: 0; z-index: 2; pointer-events: none; display: none; }
+    ::-webkit-scrollbar { width: 4px; } ::-webkit-scrollbar-thumb { background: rgba(79,158,255,.3); border-radius: 4px; }
+    #app { position: relative; z-index: 10; height: calc(100vh - var(--bar)); overflow-y: auto; overflow-x: hidden; padding: 28px 20px; max-width: 1060px; margin: 0 auto; }
+    #bar { position: fixed; bottom: 0; left: 0; right: 0; height: var(--bar); z-index: 200; background: rgba(5,10,18,.92); backdrop-filter: blur(28px); border-top: 1px solid var(--bd); display: flex; align-items: center; justify-content: space-between; padding: 0 14px; box-shadow: 0 -4px 24px rgba(0,0,0,.5); }
+    .bg { display: flex; align-items: center; gap: 6px; }
+    .pill { display: inline-flex; align-items: center; gap: 5px; padding: 5px 12px; border-radius: 40px; font-size: .79rem; font-weight: 500; cursor: pointer; user-select: none; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07); color: var(--mu); transition: all 0.2s var(--ez); will-change: transform; }
+    .pill:hover { background: rgba(79,158,255,.14); border-color: rgba(79,158,255,.3); color: #fff; transform: scale(1.02); }
+    .ver { font-family: 'Syne', sans-serif; font-size: .74rem; font-weight: 800; letter-spacing: .07em; padding: 5px 13px; border-radius: 40px; cursor: pointer; background: linear-gradient(135deg,rgba(79,158,255,.12),rgba(123,111,240,.12)); border: 1px solid rgba(79,158,255,.24); color: var(--a); transition: all 0.2s var(--ez); will-change: transform; }
+    .ver:hover { transform: scale(1.02); box-shadow: 0 0 8px rgba(79,158,255,.2); }
+    .panel { width: 560px; max-width: 100%; margin: 0 auto; background: var(--g2); backdrop-filter: blur(28px); border-radius: 22px; padding: 26px; border: 1px solid var(--bd); box-shadow: 0 28px 56px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.05); animation: up .4s var(--ez) both; }
+    .panel h2 { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 800; margin-bottom: 20px; background: linear-gradient(135deg,#fff,#9dc8f8); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    @keyframes up { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+    .inp { width: 100%; padding: 11px 15px; border-radius: 11px; border: 1px solid var(--bd); background: rgba(0,0,0,.38); color: var(--tx); font-size: .91rem; outline: none; margin-bottom: 11px; transition: border-color .2s, box-shadow .2s; }
+    .inp:focus { border-color: var(--a); box-shadow: 0 0 0 3px rgba(79,158,255,.15); }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 10px 18px; border-radius: 14px; border: 1px solid rgba(255,255,255,.09); cursor: pointer; font-size: .89rem; font-weight: 500; color: #fff; background: rgba(255,255,255,.07); transition: all 0.2s var(--ez); user-select: none; white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,.2); will-change: transform, box-shadow; }
+    .btn:hover { background: rgba(79,158,255,.18); border-color: rgba(79,158,255,.38); box-shadow: 0 8px 18px rgba(0,0,0,.3); transform: scale(1.02); }
+    .btn:active { transform: scale(0.98); box-shadow: 0 2px 8px rgba(0,0,0,.2); transition-duration: 0.05s; }
+    .pr { background: linear-gradient(135deg,var(--a),var(--a2)) !important; border: none !important; box-shadow: 0 4px 16px rgba(79,158,255,.28); }
+    .pr:hover { box-shadow: 0 8px 24px rgba(79,158,255,.45) !important; }
+    .dn { background: rgba(255,70,70,.12) !important; border-color: rgba(255,70,70,.28) !important; }
+    .gh { background: transparent !important; border: 1px solid var(--bd) !important; box-shadow: none; }
+    .gh:hover { background: rgba(255,255,255,.06) !important; }
+    .sm { padding: 6px 13px !important; font-size: .79rem !important; border-radius: 10px !important; }
+    .hd { text-align: center; margin-bottom: 28px; animation: up .5s var(--ez) both; }
+    .hd h1 { font-family: 'Syne', sans-serif; font-size: 2.9rem; font-weight: 800; letter-spacing: -.03em; line-height: 1.1; background: linear-gradient(135deg,#fff 10%,#7ec8ff 55%,#a78bfa 90%); -webkit-background-clip: text; background-clip: text; color: transparent; margin-bottom: 10px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(148px,1fr)); gap: 11px; }
+    .gbtn { background: rgba(10,16,26,.55); backdrop-filter: blur(14px); border: 1px solid var(--bd); border-radius: 20px; padding: 20px 13px; text-align: center; cursor: pointer; font-family: 'Syne', sans-serif; font-size: .9rem; font-weight: 700; color: #fff; transition: all 0.25s var(--ez); box-shadow: 0 5px 18px rgba(0,0,0,.3); user-select: none; will-change: transform, box-shadow; }
+    .gbtn .ic { font-size: 1.8rem; display: block; margin-bottom: 8px; transition: transform 0.2s var(--ez); }
+    .gbtn:hover { border-color: rgba(79,158,255,.32); box-shadow: 0 12px 28px rgba(0,0,0,.4); transform: scale(1.02); }
+    .gbtn:hover .ic { transform: scale(1.05); }
+    .gbtn:active { transform: scale(0.98); box-shadow: 0 5px 18px rgba(0,0,0,.3); }
+    .bgpick { max-height: 340px; overflow-y: auto; }
+    .bgrow { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px,1fr)); gap: 7px; }
+    .bgc { border-radius: 14px; overflow: hidden; cursor: pointer; border: 2.5px solid transparent; aspect-ratio: 16/9; background: #0d1824; transition: all 0.2s var(--ez); will-change: transform; }
+    .bgc img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
+    .bgc:hover { transform: scale(1.02); border-color: rgba(79,158,255,.4); }
+    .bgc:hover img { transform: scale(1.05); }
+    .bgc.sel { border-color: var(--a); box-shadow: 0 0 0 3px rgba(79,158,255,.3); }
+    .fw { position: fixed; top: 4%; left: 4%; width: 92vw; height: 88vh; background: #07101a; border-radius: 20px; border: 1px solid rgba(79,158,255,.2); box-shadow: 0 32px 64px rgba(0,0,0,.8); display: flex; flex-direction: column; z-index: 9999; overflow: hidden; resize: both; min-width: 300px; min-height: 240px; }
+    .wb { background: rgba(7,13,22,.98); padding: 8px 13px; display: flex; align-items: center; justify-content: space-between; cursor: move; border-bottom: 1px solid var(--bd); }
+    .wco { flex: 1; position: relative; background: #07101a; overflow: hidden; }
+    .wco iframe { width: 100%; height: 100%; border: none; display: block; background: #fff; }
+    .wld { position: absolute; inset: 0; background: #07101a; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 13px; z-index: 10; }
+    .wld.gone { display: none; }
+    .wer { position: absolute; inset: 0; background: #07101a; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 24px; z-index: 9; }
+    .wer.show { display: flex; }
+    .pbtn { background: rgba(79,158,255,.1); border: 1px solid rgba(79,158,255,.22); border-radius: 14px; padding: 10px 11px; text-align: center; cursor: pointer; font-size: .81rem; font-weight: 600; color: #fff; word-break: break-word; transition: all 0.2s var(--ez); will-change: transform, box-shadow; }
+    .pbtn:hover { background: rgba(79,158,255,.26); box-shadow: 0 6px 14px rgba(0,0,0,.3); transform: scale(1.02); }
+    .pbtn:active { transform: scale(0.98); }
+    .msg { background: rgba(0,0,0,.18); border: 1px solid var(--bd); border-radius: 14px; padding: 12px; margin-bottom: 8px; display: flex; align-items: flex-start; justify-content: space-between; transition: all 0.2s; }
+    .msg:hover { border-color: rgba(79,158,255,.2); background: rgba(20,30,45,.5); }
+    .bdg { font-size: .68rem; padding: 2px 7px; border-radius: 20px; background: rgba(79,158,255,.12); border: 1px solid rgba(79,158,255,.26); color: var(--a); }
+    .asec { margin-bottom: 11px; padding: 13px; background: rgba(0,0,0,.18); border: 1px solid var(--bd); border-radius: 16px; }
+    .urow { display: flex; align-items: center; justify-content: space-between; padding: 8px 10px; border-radius: 12px; border: 1px solid var(--bd); margin-bottom: 6px; transition: all 0.2s; }
+    .urow:hover { background: rgba(79,158,255,.05); }
+    .urow.sel { border-color: var(--a); background: rgba(79,158,255,.08); }
+    select.inp { cursor: pointer; }
+    .inv-item { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px dashed var(--bd); }
+    .inv-item:last-child { border: none; }
+    .pcard { background: rgba(0,0,0,.2); border: 1px solid var(--bd); border-radius: 14px; padding: 16px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; transition: all 0.2s; }
+    .pcard:hover { border-color: rgba(79,158,255,.25); background: rgba(20,30,45,.3); }
+    .pcard h3 { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
+    .pcard p { font-size: .8rem; color: var(--mu); }
+  </style>
+</head>
+<body>
+<div id="bga"></div><div id="bgb"></div><div id="bgd"></div>
+<canvas id="stc"></canvas><canvas id="svc"></canvas>
+<div id="tos"></div>
+<div id="ubn"><div id="bavw"></div><span id="bname"></span><button class="btn sm dn" id="so-btn">Sign out</button></div>
+<div id="bar">
+  <div class="bg"><span class="ver" id="vtag">✦ v1.6.8</span><span class="pill" id="back-btn">← Back</span></div>
+  <div class="bg"><span class="pill">👤 <span id="buname">Guest</span></span><span class="pill">🪙 <span id="bcoins">0</span></span><span class="pill">⭐ Lv.<span id="blv">1</span></span></div>
+  <div class="bg" id="barr">
+    <span class="pill" id="nav-profile">👤 Profile</span>
+    <span class="pill" id="nav-shop">🛒 Shop</span>
+    <span class="pill" id="nav-inbox">📥 Inbox</span>
+    <span class="pill" id="nav-settings">⚙️ Settings</span>
+  </div>
+</div>
+<div id="app"></div>
+
+<script>
+// The entire JavaScript with updated links and modifications
+(function(){
+"use strict";
+
+// ---------- DATA ----------
+const BG = [
+  {cat:'space', name:'Milky Way', url:'https://images.unsplash.com/photo-1534796636912-3b6dece5a264?w=1920&q=80', th:'https://images.unsplash.com/photo-1534796636912-3b6dece5a264?w=360&q=70'},
+  {cat:'space', name:'Nebula', url:'https://images.unsplash.com/photo-1543722530-d2c3201371e7?w=1920&q=80', th:'https://images.unsplash.com/photo-1543722530-d2c3201371e7?w=360&q=70'},
+  {cat:'space', name:'Galaxy', url:'https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=1920&q=80', th:'https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=360&q=70'},
+  {cat:'wildlife',name:'Wolf', url:'https://images.unsplash.com/photo-1474511320723-9a56873867b5?w=1920&q=80', th:'https://images.unsplash.com/photo-1474511320723-9a56873867b5?w=360&q=70'},
+  {cat:'wildlife',name:'Tiger', url:'https://images.unsplash.com/photo-1561731216-c3a4d99437d5?w=1920&q=80', th:'https://images.unsplash.com/photo-1561731216-c3a4d99437d5?w=360&q=70'},
+  {cat:'geo', name:'Norwegian Fjord', url:'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=1920&q=80', th:'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=360&q=70'},
+  {cat:'geo', name:'Grand Canyon', url:'https://images.unsplash.com/photo-1474044159687-1ee9f3a51722?w=1920&q=80', th:'https://images.unsplash.com/photo-1474044159687-1ee9f3a51722?w=360&q=70'},
+];
+const SV = '__surfer__';
+
+const PX1 = [
+  'https://gffgdfdgdfgfdg.cuetara.name/onboarding/','https://ghfggfgfhghf.cuetara.name/onboarding/',
+  'https://hnuhnfgdhnufgujhm.cuetara.name/onboarding/','https://fvfvdfgdfgfgddfg.hosts.name/onboarding/',
+  'https://hjkfgjhfghjfghjgf.hosts.name/onboarding/','https://ok.rinet.ai/onboarding/',
+  'https://gfhfghghfgf.rinet.ai/onboarding/','https://sdfgffdg.cuetara.name/onboarding/',
+  'https://igottogotoadance.cuetara.name/onboarding/',
+];
+const PX2 = ['https://overunder1.b-cdn.net/', ...Array.from({length:50},(_,i)=>`https://overunder${i+31}.b-cdn.net/`)];
+
+// MORE_PROXIES with all links + new additions
+const MORE_PROXIES = [
+  "http://filterbrowser.tiatex.com/onboarding/","http://filterbrowser.thenookfactory.com/onboarding/","http://filterbrowser.themathdoctors.org/onboarding/",
+  "https://gffgdfdgdfgfdg.cuetara.name/onboarding/","https://ghfggfgfhghf.cuetara.name/onboarding/","https://hnuhnfgdhnufgujhm.cuetara.name/onboarding/",
+  "https://fvfvdfgdfgfgddfg.hosts.name/onboarding/","https://hjkfgjhfghjfghjgf.hosts.name/onboarding/","https://ok.rinet.ai/onboarding/",
+  "https://gfhfghghfgf.rinet.ai/onboarding/","https://sdfgffdg.cuetara.name/onboarding/","https://igottogotoadance.cuetara.name/onboarding/",
+  "https://misa-678.b-cdn.net/","https://photo-992.b-cdn.net/","https://math-358.b-cdn.net/","https://texaslearning-561.b-cdn.net/",
+  "https://development-535.b-cdn.net/","https://ela-404.b-cdn.net/","https://biology-620.b-cdn.net/","https://ai-softwares-796.b-cdn.net/",
+  "https://biology-372.b-cdn.net/","https://photo-328.b-cdn.net/","https://photo-344.b-cdn.net/","https://math-392.b-cdn.net/",
+  "https://development-190.b-cdn.net/","https://modernworldhistory-107.b-cdn.net/","https://biology-756.b-cdn.net/","https://ai-softwares-116.b-cdn.net/",
+  "https://american-history-228.b-cdn.net/","https://ap-classes-993.b-cdn.net/","https://compsci-297.b-cdn.net/","https://misa-696.b-cdn.net/",
+  "https://biology-199.b-cdn.net/","https://ai-softwares-339.b-cdn.net/","https://chemistry-802.b-cdn.net/","https://photo-700.b-cdn.net/",
+  "https://math-281.b-cdn.net/","https://compsci-930.b-cdn.net/","https://modernworldhistory-577.b-cdn.net/","https://misa-965.b-cdn.net/",
+  "https://compsci-987.b-cdn.net/","https://math-902.b-cdn.net/","https://ap-classes-995.b-cdn.net/","https://ap-classes-658.b-cdn.net/",
+  "https://biology-521.b-cdn.net/","https://ai-softwares-810.b-cdn.net/","https://art-692.b-cdn.net/","https://modernworldhistory-504.b-cdn.net/",
+  "https://mcap-954.b-cdn.net/","https://ai-softwares-106.b-cdn.net/","https://ela-590.b-cdn.net/","https://misa-144.b-cdn.net/",
+  "https://ap-classes-549.b-cdn.net/","https://tutoring-427.b-cdn.net/","https://science-466.b-cdn.net/","https://math-333.b-cdn.net/",
+  "https://ai-softwares-729.b-cdn.net/","https://tutoring-279.b-cdn.net/","https://ai-softwares-992.b-cdn.net/","https://modernworldhistory-309.b-cdn.net/",
+  "https://chemistry-817.b-cdn.net/","https://development-68572.b-cdn.net/","https://compsci-10928.b-cdn.net/","https://ap-classes-22843.b-cdn.net/",
+  "https://calculator-46920.b-cdn.net/","https://science-38003.b-cdn.net/","https://ap-classes-25240.b-cdn.net/","https://math-5462.b-cdn.net/",
+  "https://biology-10079.b-cdn.net/","https://ap-classes-37998.b-cdn.net/","https://calculator-76301.b-cdn.net/","https://compsci-7499.b-cdn.net/",
+  "https://ela-65287.b-cdn.net/","https://math-74264.b-cdn.net/","https://compsci-76524.b-cdn.net/","https://texaslearning-62056.b-cdn.net/",
+  "https://photo-1090.b-cdn.net/","https://mcap-16870.b-cdn.net/","https://misa-32556.b-cdn.net/","https://science-66052.b-cdn.net/",
+  "https://biology-9811.b-cdn.net/","https://mcap-82446.b-cdn.net/","https://american-history-81338.b-cdn.net/","https://texaslearning-8862.b-cdn.net/",
+  "https://chemistry-15992.b-cdn.net/","https://chemistry-7722.b-cdn.net/","https://development-38002.b-cdn.net/","https://misa-47282.b-cdn.net/",
+  "https://american-history-14393.b-cdn.net/","https://ai-softwares-73072.b-cdn.net/","https://science-73962.b-cdn.net/","https://math-34908.b-cdn.net/",
+  "https://science-63686.b-cdn.net/","https://biology-7720.b-cdn.net/","https://development-49542.b-cdn.net/","https://art-14640.b-cdn.net/",
+  "https://ela-85065.b-cdn.net/","https://compsci-86985.b-cdn.net/","https://photo-47375.b-cdn.net/","https://modernworldhistory-11542.b-cdn.net/",
+  "https://calculator-38211.b-cdn.net/","https://biology-69706.b-cdn.net/","https://texaslearning-78676.b-cdn.net/","https://ela-77465.b-cdn.net/",
+  "https://math-65552.b-cdn.net/","https://mcap-26207.b-cdn.net/","https://tutoring-64864.b-cdn.net/","https://science-7890.b-cdn.net/",
+  "https://math-63022.b-cdn.net/","https://development-18394.b-cdn.net/","https://photo-85223.b-cdn.net/","https://development-11803.b-cdn.net/",
+  "https://tutoring-76699.b-cdn.net/","https://calculator-75070.b-cdn.net/","https://texaslearning-1876.b-cdn.net/","https://ela-49291.b-cdn.net/",
+  "https://science-75646.b-cdn.net/","https://tutoring-21253.b-cdn.net/","https://ap-classes-5410.b-cdn.net/","https://science-19806.b-cdn.net/",
+  "https://tutoring-87016.b-cdn.net/","https://art-38488.b-cdn.net/","https://compsci-41178.b-cdn.net/","https://mcap-51791.b-cdn.net/",
+  "https://ai-softwares-52441.b-cdn.net/","https://mcap-1768.b-cdn.net/","https://science-89855.b-cdn.net/","https://texaslearning-31978.b-cdn.net/",
+  "https://calculator-55216.b-cdn.net/","https://biology-53133.b-cdn.net/","https://ap-classes-82726.b-cdn.net/","https://tutoring-26781.b-cdn.net/",
+  "https://compsci-84749.b-cdn.net/","https://art-78614.b-cdn.net/","https://compsci-79028.b-cdn.net/","https://math-64230.b-cdn.net/",
+  "https://math-16819.b-cdn.net/","https://modernworldhistory-15655.b-cdn.net/","https://art-78434.b-cdn.net/","https://american-history-73471.b-cdn.net/",
+  "https://modernworldhistory-9617.b-cdn.net/","https://development-953.b-cdn.net/","https://art-80387.b-cdn.net/","https://development-24083.b-cdn.net/",
+  "https://photo-33840.b-cdn.net/","https://ap-classes-78325.b-cdn.net/","https://texaslearning-55104.b-cdn.net/","https://mcap-10837.b-cdn.net/",
+  "https://ela-44611.b-cdn.net/","https://development-63095.b-cdn.net/","https://texaslearning-1780.b-cdn.net/","https://photo-2841.b-cdn.net/",
+  "https://tutoring-84698.b-cdn.net/","https://chemistry-76651.b-cdn.net/","https://mcap-14376.b-cdn.net/","https://compsci-15404.b-cdn.net/",
+  "https://biology-9939.b-cdn.net/","https://art-13587.b-cdn.net/","https://american-history-69539.b-cdn.net/","https://science-65357.b-cdn.net/",
+  "https://tutoring-75789.b-cdn.net/", "https://fuckmeupallover.b-cdn.net/", "https://ihatyou.b-cdn.net/", "https://fuckyou.b-cdn.net/",
+  "https://dickme.b-cdn.net/", "https://suckit.b-cdn.net/", "https://geography-92cla.b-cdn.net/", "https://chemistry-ke96x.b-cdn.net/",
+  "https://history-ncv2x.b-cdn.net/", "https://physics-j3sae.b-cdn.net/", "https://calculus-x3xfc.b-cdn.net/", "https://theorems-o44fg.b-cdn.net/",
+  "https://physics-4t02s.b-cdn.net/", "https://cdn-splash-nahidontneed-help-mnuum6ii.b-cdn.net/", "https://grammar-xhggs.b-cdn.net/",
+  "http://filterbrowser.tiatex.com/onboarding/","http://filterbrowser.thenookfactory.com/onboarding/","http://filterbrowser.themathdoctors.org/onboarding/",
+  "https://gffgdfdgdfgfdg.cuetara.name/onboarding/","https://ghfggfgfhghf.cuetara.name/onboarding/","https://hnuhnfgdhnufgujhm.cuetara.name/onboarding/",
+  "https://fvfvdfgdfgfgddfg.hosts.name/onboarding/","https://hjkfgjhfghjfghjgf.hosts.name/onboarding/","https://ok.rinet.ai/onboarding/",
+  "https://gfhfghghfgf.rinet.ai/onboarding/","https://sdfgffdg.cuetara.name/onboarding/","https://igottogotoadance.cuetara.name/onboarding/",
+  "https://misa-678.b-cdn.net/","https://photo-992.b-cdn.net/","https://math-358.b-cdn.net/","https://texaslearning-561.b-cdn.net/",
+  "https://development-535.b-cdn.net/","https://ela-404.b-cdn.net/","https://biology-620.b-cdn.net/","https://ai-softwares-796.b-cdn.net/",
+  "https://biology-372.b-cdn.net/","https://photo-328.b-cdn.net/","https://photo-344.b-cdn.net/","https://math-392.b-cdn.net/",
+  "https://development-190.b-cdn.net/","https://modernworldhistory-107.b-cdn.net/","https://biology-756.b-cdn.net/","https://ai-softwares-116.b-cdn.net/",
+  "https://american-history-228.b-cdn.net/","https://ap-classes-993.b-cdn.net/","https://compsci-297.b-cdn.net/","https://misa-696.b-cdn.net/",
+  "https://biology-199.b-cdn.net/","https://ai-softwares-339.b-cdn.net/","https://chemistry-802.b-cdn.net/","https://photo-700.b-cdn.net/",
+  "https://math-281.b-cdn.net/","https://compsci-930.b-cdn.net/","https://modernworldhistory-577.b-cdn.net/","https://misa-965.b-cdn.net/",
+  "https://compsci-987.b-cdn.net/","https://math-902.b-cdn.net/","https://ap-classes-995.b-cdn.net/","https://ap-classes-658.b-cdn.net/",
+  "https://biology-521.b-cdn.net/","https://ai-softwares-810.b-cdn.net/","https://art-692.b-cdn.net/","https://modernworldhistory-504.b-cdn.net/",
+  "https://mcap-954.b-cdn.net/","https://ai-softwares-106.b-cdn.net/","https://ela-590.b-cdn.net/","https://misa-144.b-cdn.net/",
+  "https://ap-classes-549.b-cdn.net/","https://tutoring-427.b-cdn.net/","https://science-466.b-cdn.net/","https://math-333.b-cdn.net/",
+  "https://ai-softwares-729.b-cdn.net/","https://tutoring-279.b-cdn.net/","https://ai-softwares-992.b-cdn.net/","https://modernworldhistory-309.b-cdn.net/",
+  "https://chemistry-817.b-cdn.net/","https://development-68572.b-cdn.net/","https://compsci-10928.b-cdn.net/","https://ap-classes-22843.b-cdn.net/",
+  "https://calculator-46920.b-cdn.net/","https://science-38003.b-cdn.net/","https://ap-classes-25240.b-cdn.net/","https://math-5462.b-cdn.net/",
+  "https://biology-10079.b-cdn.net/","https://ap-classes-37998.b-cdn.net/","https://calculator-76301.b-cdn.net/","https://compsci-7499.b-cdn.net/",
+  "https://ela-65287.b-cdn.net/","https://math-74264.b-cdn.net/","https://compsci-76524.b-cdn.net/","https://texaslearning-62056.b-cdn.net/",
+  "https://photo-1090.b-cdn.net/","https://mcap-16870.b-cdn.net/","https://misa-32556.b-cdn.net/","https://science-66052.b-cdn.net/",
+  "https://biology-9811.b-cdn.net/","https://mcap-82446.b-cdn.net/","https://american-history-81338.b-cdn.net/","https://texaslearning-8862.b-cdn.net/",
+  "https://chemistry-15992.b-cdn.net/","https://chemistry-7722.b-cdn.net/","https://development-38002.b-cdn.net/","https://misa-47282.b-cdn.net/",
+  "https://american-history-14393.b-cdn.net/","https://ai-softwares-73072.b-cdn.net/","https://science-73962.b-cdn.net/","https://math-34908.b-cdn.net/",
+  "https://science-63686.b-cdn.net/","https://biology-7720.b-cdn.net/","https://development-49542.b-cdn.net/","https://art-14640.b-cdn.net/",
+  "https://ela-85065.b-cdn.net/","https://compsci-86985.b-cdn.net/","https://photo-47375.b-cdn.net/","https://modernworldhistory-11542.b-cdn.net/",
+  "https://calculator-38211.b-cdn.net/","https://biology-69706.b-cdn.net/","https://texaslearning-78676.b-cdn.net/","https://ela-77465.b-cdn.net/",
+  "https://math-65552.b-cdn.net/","https://mcap-26207.b-cdn.net/","https://tutoring-64864.b-cdn.net/","https://science-7890.b-cdn.net/",
+  "https://math-63022.b-cdn.net/","https://development-18394.b-cdn.net/","https://photo-85223.b-cdn.net/","https://development-11803.b-cdn.net/",
+  "https://tutoring-76699.b-cdn.net/","https://calculator-75070.b-cdn.net/","https://texaslearning-1876.b-cdn.net/","https://ela-49291.b-cdn.net/",
+  "https://science-75646.b-cdn.net/","https://tutoring-21253.b-cdn.net/","https://ap-classes-5410.b-cdn.net/","https://science-19806.b-cdn.net/",
+  "https://tutoring-87016.b-cdn.net/","https://art-38488.b-cdn.net/","https://compsci-41178.b-cdn.net/","https://mcap-51791.b-cdn.net/",
+  "https://ai-softwares-52441.b-cdn.net/","https://mcap-1768.b-cdn.net/","https://science-89855.b-cdn.net/","https://texaslearning-31978.b-cdn.net/",
+  "https://calculator-55216.b-cdn.net/","https://biology-53133.b-cdn.net/","https://ap-classes-82726.b-cdn.net/","https://tutoring-26781.b-cdn.net/",
+  "https://compsci-84749.b-cdn.net/","https://art-78614.b-cdn.net/","https://compsci-79028.b-cdn.net/","https://math-64230.b-cdn.net/",
+  "https://math-16819.b-cdn.net/","https://modernworldhistory-15655.b-cdn.net/","https://art-78434.b-cdn.net/","https://american-history-73471.b-cdn.net/",
+  "https://modernworldhistory-9617.b-cdn.net/","https://development-953.b-cdn.net/","https://art-80387.b-cdn.net/","https://development-24083.b-cdn.net/",
+  "https://photo-33840.b-cdn.net/","https://ap-classes-78325.b-cdn.net/","https://texaslearning-55104.b-cdn.net/","https://mcap-10837.b-cdn.net/",
+  "https://ela-44611.b-cdn.net/","https://development-63095.b-cdn.net/","https://texaslearning-1780.b-cdn.net/","https://photo-2841.b-cdn.net/",
+  "https://tutoring-84698.b-cdn.net/","https://chemistry-76651.b-cdn.net/","https://mcap-14376.b-cdn.net/","https://compsci-15404.b-cdn.net/",
+  "https://biology-9939.b-cdn.net/","https://art-13587.b-cdn.net/","https://american-history-69539.b-cdn.net/","https://science-65357.b-cdn.net/",
+  "https://tutoring-75789.b-cdn.net/",
+  "https://avery-taylor-95.b-cdn.net/","https://james-anderson-80.b-cdn.net/","https://charlotte-miller-32.b-cdn.net/",
+  "https://alexander-white-72.b-cdn.net/","https://charlotte-ramirez-98.b-cdn.net/","https://david-hernandez-45.b-cdn.net/",
+  "https://amelia-taylor-33.b-cdn.net/","https://emma-jackson-54.b-cdn.net/","https://elizabeth-robinson-22.b-cdn.net/",
+  "https://abigail-rodriguez-40.b-cdn.net/","https://ofia-thompson-47.b-cdn.net/","https://olivia-thomas-44.b-cdn.net/",
+  "https://jacob-perez-16.b-cdn.net/","https://logan-harris-68.b-cdn.net/","https://mason-garcia-80.b-cdn.net/",
+  "https://liam-thompson-16.b-cdn.net/","https://lucas-gonzalez-65.b-cdn.net/","https://isabella-miller-20.b-cdn.net/",
+  "https://liam-smith-96.b-cdn.net/","https://harper-thompson-89.b-cdn.net/","https://ethan-peak-256.b-cdn.net/",
+  "https://noah-miller-787.b-cdn.net/","https://sharp-brown-397.b-cdn.net/","https://noah-cool-422.b-cdn.net/",
+  "https://mia-miller-454.b-cdn.net/","https://ava-jones-722.b-cdn.net/","https://james-smith-806.b-cdn.net/",
+  "https://cool-miller-954.b-cdn.net/","https://mason-quick-951.b-cdn.net/","https://mason-quick-434.b-cdn.net/",
+  "https://meganet2533.b-cdn.net","https://cleanpath8848.b-cdn.net","https://swiftgrid3076.b-cdn.net","https://ultraflux1248.b-cdn.net",
+  "https://clearpipe6554.b-cdn.net","https://apexzone4006.b-cdn.net","https://liteweb2235.b-cdn.net","https://purecache9745.b-cdn.net",
+  "https://hyperweb7148.b-cdn.net","https://primecdn9677.b-cdn.net","https://hyperflux3351.b-cdn.net","https://boldwave6751.b-cdn.net",
+  "https://ultracore7537.b-cdn.net","https://primeweb9613.b-cdn.net","https://fastbeam6500.b-cdn.net","https://primeweb6326.b-cdn.net",
+  "https://brightnode9566.b-cdn.net","https://fastweb2991.b-cdn.net","https://swiftcore4351.b-cdn.net","https://ultrawave4545.b-cdn.net",
+  "https://supercore8708.b-cdn.net","https://brighthub1850.b-cdn.net","https://smartcache1805.b-cdn.net","https://cleanpipe4592.b-cdn.net",
+  "https://clearnode6157.b-cdn.net","https://clearcdn7846.b-cdn.net","https://ultracore2318.b-cdn.net","https://quickcache5498.b-cdn.net",
+  "https://quickcore6030.b-cdn.net","https://rapidweb4304.b-cdn.net","https://superzone7606.b-cdn.net","https://nextbeam5219.b-cdn.net",
+  "https://nextnet3244.b-cdn.net","https://rapidnode3879.b-cdn.net","https://freshnode4301.b-cdn.net","https://nextbeam9842.b-cdn.net",
+  "https://freshhost7104.b-cdn.net","https://apexdash9642.b-cdn.net","https://sharpweb3773.b-cdn.net","https://quickhub3818.b-cdn.net",
+  "https://cleancdn1216.b-cdn.net",
+  // NEW ADDITIONS FROM USER
+  "https://meganet2533.b-cdn.net/", "https://cleanpath8848.b-cdn.net/", "https://swiftgrid3076.b-cdn.net/", "https://ultraflux1248.b-cdn.net/",
+  "https://clearpipe6554.b-cdn.net/", "https://apexzone4006.b-cdn.net/", "https://liteweb2235.b-cdn.net/", "https://purecache9745.b-cdn.net/",
+  "https://hyperweb7148.b-cdn.net/", "https://primecdn9677.b-cdn.net/", "https://hyperflux3351.b-cdn.net/", "https://boldwave6751.b-cdn.net/",
+  "https://ultracore7537.b-cdn.net/", "https://primeweb9613.b-cdn.net/", "https://fastbeam6500.b-cdn.net/", "https://primeweb6326.b-cdn.net/",
+  "https://brightnode9566.b-cdn.net/", "https://fastweb2991.b-cdn.net/", "https://swiftcore4351.b-cdn.net/", "https://ultrawave4545.b-cdn.net/",
+  "https://supercore8708.b-cdn.net/", "https://brighthub1850.b-cdn.net/", "https://smartcache1805.b-cdn.net/", "https://cleanpipe4592.b-cdn.net/",
+  "https://clearnode6157.b-cdn.net/", "https://clearcdn7846.b-cdn.net/", "https://ultracore2318.b-cdn.net/", "https://quickcache5498.b-cdn.net/",
+  "https://quickcore6030.b-cdn.net/", "https://rapidweb4304.b-cdn.net/", "https://superzone7606.b-cdn.net/", "https://nextbeam5219.b-cdn.net/",
+  "https://nextnet3244.b-cdn.net/", "https://rapidnode3879.b-cdn.net/", "https://freshnode4301.b-cdn.net/", "https://nextbeam9842.b-cdn.net/",
+  "https://freshhost7104.b-cdn.net/", "https://apexdash9642.b-cdn.net/", "https://sharpweb3773.b-cdn.net/", "https://quickhub3818.b-cdn.net/",
+  "https://cleancdn1216.b-cdn.net/",
+  "https://penelope-martinez-44.b-cdn.net/","https://ava-perez-44.b-cdn.net/","https://aiden-ramirez-27.b-cdn.net/",
+  "https://sophia-sanchez-11.b-cdn.net/","https://layla-johnson-48.b-cdn.net/","https://sebastian-robinson-35.b-cdn.net/",
+  "https://ava-lewis-94.b-cdn.net/","https://avery-miller-56.b-cdn.net/","https://chloe-wright-83.b-cdn.net/",
+  "https://jacob-anderson-16.b-cdn.net/",
+  "https://tung-isachud.b-cdn.net/","https://gokulover-isachud.b-cdn.net/","https://chud-chud.b-cdn.net/",
+  "https://lunar-laid.b-cdn.net/","https://tungtung-bros.b-cdn.net/","https://gokulover-sucks.b-cdn.net/",
+  "https://cdn.jsdelivr.net/gh/Stellite-Games/cdn-build@master/logo.svg",
+  "https://storage.googleapis.com/science-tutor/logo.svg",
+  "https://books-api-query.s3.us-east-2.amazonaws.com/logo.svg",
+  "https://laid.b-cdn.net/","https://luna-laid.b-cdn.net/",
+  "https://logan-johnson-28.b-cdn.net/","https://elizabeth-rodriguez-50.b-cdn.net/","https://ava-robinson-62.b-cdn.net/",
+  "https://james-martin-83.b-cdn.net/","https://daniel-johnson-28.b-cdn.net/","https://emma-jones-92.b-cdn.net/",
+  "https://olivia-lopez-78.b-cdn.net/","https://william-brown-53.b-cdn.net/","https://daniel-lee-75.b-cdn.net/",
+  "https://emily-gonzalez-59.b-cdn.net/","https://william-lopez-87.b-cdn.net/","https://ava-martin-97.b-cdn.net/",
+  "https://david-martin-56.b-cdn.net/","https://avery-sanchez-46.b-cdn.net/","https://logan-garcia-41.b-cdn.net/",
+  "https://avery-thomas-63.b-cdn.net/","https://lucas-lee-19.b-cdn.net/","https://alexander-sanchez-79.b-cdn.net/",
+  "https://noah-thomas-34.b-cdn.net/","https://emily-robinson-65.b-cdn.net/","https://alexander-lopez-52.b-cdn.net/",
+  "https://charlotte-davis-80.b-cdn.net/","https://emily-clark-97.b-cdn.net/","https://emma-davis-11.b-cdn.net/",
+  "https://logan-gonzalez-31.b-cdn.net/","https://lucas-harris-76.b-cdn.net/","https://mia-harris-58.b-cdn.net/",
+  "https://sofia-brown-44.b-cdn.net/","https://anthony-harris-55.b-cdn.net/","https://daniel-wilson-94.b-cdn.net/",
+  "https://abigail-martin-35.b-cdn.net/","https://james-perez-43.b-cdn.net/","https://isabella-white-70.b-cdn.net/",
+  "https://avery-lewis-64.b-cdn.net/","https://lucas-white-99.b-cdn.net/","https://amelia-martinez-78.b-cdn.net/",
+  "https://avery-martin-13.b-cdn.net/","https://william-gonzalez-30.b-cdn.net/","https://jacob-wilson-23.b-cdn.net/",
+  "https://ethan-harris-52.b-cdn.net/","https://emily-williams-74.b-cdn.net/","https://elizabeth-anderson-86.b-cdn.net/",
+  "https://ava-sanchez-88.b-cdn.net/","https://liam-perez-14.b-cdn.net/","https://sophia-smith-64.b-cdn.net/",
+  "https://liam-johnson-61.b-cdn.net/","https://alexander-perez-96.b-cdn.net/","https://david-white-27.b-cdn.net/",
+  "https://avery-anderson-42.b-cdn.net/","https://amelia-lopez-76.b-cdn.net/",
+  "https://cdn.jsdelivr.net/gh/pineapple-petezah/homework@main/main.svg",
+  "https://cdn.jsdelivr.net/gh/PeteZah-G/copy-2/main.svg",
+  "https://cdn.jsdelivr.net/gh/PeteZah-G/copy-2@main/main.svg",
+  "https://cdn.jsdelivr.net/gh/pineapple-petezah/homework/main.svg",
+  "https://zxgzmbkfogafegoaenus.supabase.co/storage/v1/object/public/test/PETEZAH/main.svg"
+];
+
+const KU='phx_u9', KC='phx_c9', KB='phx_b9';
+let users = {}, cur = null, activeBg = BG[0].url;
+let adminOn = false, vcnt = 0, vtmr = null, prevFn = null;
+let sfAF = null, sfOn = false, bgFlip = false;
+let adTarget = null;
+
+const $app = document.getElementById('app');
+const $bga = document.getElementById('bga'), $bgb = document.getElementById('bgb');
+const $stc = document.getElementById('stc'), $svc = document.getElementById('svc');
+const $ubn = document.getElementById('ubn'), $bavw = document.getElementById('bavw'), $bn = document.getElementById('bname');
+
+function toast(msg, type){ let el=document.createElement('div'); el.className='toast'+(type?' '+type:''); el.textContent=msg; document.getElementById('tos').appendChild(el); setTimeout(()=>el.remove(), 3200); }
+function el(id){ return document.getElementById(id); }
+function esc(s){ return String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]); }
+
+function load(){ try{ users=JSON.parse(localStorage.getItem(KU)||'{}'); }catch{ users={}; } try{ cur=JSON.parse(localStorage.getItem(KC)||'null'); }catch{ cur=null; } try{ let b=localStorage.getItem(KB); if(b) activeBg=b; }catch{} }
+function su(){ localStorage.setItem(KU, JSON.stringify(users)); }
+function sc(){ localStorage.setItem(KC, JSON.stringify(cur)); }
+function sb(u){ localStorage.setItem(KB, u); }
+function mkUser(n){ return {username:n, background:BG[0].url, coins:100, level:1, avatar:null, inventory:[], inbox:[], profileEffect:'blue', resetOnLoad:false}; }
+
+function refreshBar(){ el('buname').textContent = cur ? cur.username : 'Guest'; el('bcoins').textContent = cur ? (cur.coins||0) : '0'; el('blv').textContent = cur ? (cur.level||1) : '1'; }
+function refreshBanner(){ if(!cur){ $ubn.style.display='none'; return; } $ubn.style.display='flex'; $bn.textContent=cur.username; $bavw.innerHTML=cur.avatar?'<img class="bav" src="'+cur.avatar+'">':'<div class="bavp">👤</div>'; }
+
+function applyBg(url, skipSave){
+  $stc.classList.toggle('on', url===SV);
+  if(url===SV){ stopSurfer(); $bga.style.backgroundImage='none'; $bgb.style.backgroundImage='none'; startSurfer(); }
+  else { stopSurfer(); if(!bgFlip){ $bgb.style.backgroundImage="url('"+url+"')"; $bgb.style.opacity='1'; $bga.style.opacity='0'; } else { $bga.style.backgroundImage="url('"+url+"')"; $bga.style.opacity='1'; $bgb.style.opacity='0'; } bgFlip=!bgFlip; }
+  activeBg=url; if(!skipSave) sb(url); if(cur){ cur.background=url; users[cur.username]=cur; su(); sc(); }
+}
+function stopSurfer(){ if(sfAF) cancelAnimationFrame(sfAF); $svc.style.display='none'; sfOn=false; }
+function startSurfer(){ stopSurfer(); $svc.style.display='block'; sfOn=true; let ctx=$svc.getContext('2d'),W,H,t=0; function resize(){ W=$svc.width=innerWidth; H=$svc.height=innerHeight; } window.addEventListener('resize',resize); resize(); (function draw(){ if(!sfOn)return; ctx.clearRect(0,0,W,H); for(let i=0;i<4;i++){ ctx.beginPath(); let o=i*75+t*0.07; for(let x=0;x<=W;x+=18){ let y=H/2+95*Math.sin(x*0.006+o)+55*Math.cos(x*0.003+t*0.014); x===0?ctx.moveTo(x,y):ctx.lineTo(x,y); } ctx.lineTo(W,H); ctx.lineTo(0,H); ctx.closePath(); ctx.fillStyle='hsla('+(212+i*14)+',78%,65%,'+(0.08-i*0.011)+')'; ctx.fill(); } t++; sfAF=requestAnimationFrame(draw); })(); }
+
+function setView(html, back){ $app.innerHTML=html; $app.scrollTop=0; prevFn=(typeof back==='function')?back:home; }
+function goBack(){ (prevFn||home)(); }
+
+function home(){
+  let sub = cur ? '👋 '+esc(cur.username) : '✦ Not signed in';
+  let adm = adminOn ? '<div class="gbtn" id="hbtn-admin"><span class="ic">🛡️</span><span class="lb">Admin</span></div>' : '';
+  // Removed both infinite buttons, changed premium link, games link remains
+  setView('<div class="hd"><h1>Premium Hub</h1><span class="sub">'+sub+'</span></div><span class="slbl">Main</span><div class="grid"><div class="gbtn" id="hbtn-games"><span class="ic">🎮</span><span class="lb">Games</span></div><div class="gbtn" id="hbtn-apps"><span class="ic">📱</span><span class="lb">Apps</span></div><div class="gbtn" id="hbtn-prem"><span class="ic">💎</span><span class="lb">Premium</span></div><div class="gbtn" id="hbtn-prox"><span class="ic">🔗</span><span class="lb">Proxies</span></div></div><span class="slbl">More</span><div class="grid"><div class="gbtn" id="hbtn-part"><span class="ic">🤝</span><span class="lb">Partners</span></div><div class="gbtn" id="hbtn-sw"><span class="ic">🔄</span><span class="lb">Switch User</span></div>'+adm+'</div>', null);
+  document.getElementById('hbtn-games').onclick = ()=>openProxy('https://gamesyesyes.edgeone.app/');
+  document.getElementById('hbtn-apps').onclick = showApps;
+  document.getElementById('hbtn-prem').onclick = ()=>openProxy('https://goku.b-cdn.net/'); // Updated premium link
+  document.getElementById('hbtn-prox').onclick = showProxies;
+  document.getElementById('hbtn-part').onclick = showPartners;
+  document.getElementById('hbtn-sw').onclick = showLogin;
+  if(adminOn) document.getElementById('hbtn-admin').onclick = showAdmin;
+}
+
+function showLogin(){
+  stopSurfer();
+  setView('<div class="panel" style="max-width:480px"><h2>✦ Welcome</h2><input id="l-name" class="inp" placeholder="Username" autocomplete="off"><div style="display:flex;gap:9px;margin-bottom:18px"><button class="btn pr" id="l-signin" style="flex:1">Sign In</button><button class="btn" id="l-create" style="flex:1">Create Account</button></div><hr class="dvdr"><span class="lbl">Choose Background</span>'+buildPicker('lpick')+'<hr class="dvdr"><div class="chk"><input type="checkbox" id="l-reset"><label for="l-reset">Reset session on next load</label></div><div style="margin-top:14px"><button class="btn gh sm" id="l-skip">Skip →</button></div></div>', home);
+  initPicker('lpick');
+  document.getElementById('l-signin').onclick = ()=>{
+    let n = el('l-name').value.trim();
+    if(!n) return toast('Enter username','er');
+    if(!users[n]) return toast('Account not found','er');
+    cur = users[n];
+    cur.resetOnLoad = !!el('l-reset').checked;
+    sc();
+    afterLogin();
+  };
+  document.getElementById('l-create').onclick = ()=>{
+    let n = el('l-name').value.trim();
+    if(!n) return toast('Enter username','er');
+    if(users[n]) return toast('Username taken','er');
+    let u = mkUser(n);
+    u.background = activeBg;
+    u.resetOnLoad = !!el('l-reset').checked;
+    users[n] = u;
+    su();
+    cur = u;
+    sc();
+    afterLogin();
+  };
+  document.getElementById('l-skip').onclick = home;
+}
+function afterLogin(){ applyBg(cur.background); refreshBar(); refreshBanner(); home(); toast('Signed in as '+cur.username+' ✦','ok'); }
+function signOut(){ cur=null; sc(); refreshBar(); refreshBanner(); let b=localStorage.getItem(KB)||BG[0].url; applyBg(b,true); showLogin(); }
+
+function buildPicker(pid){ let cats={space:'🌌 Space',wildlife:'🦁 Wildlife',geo:'🌍 Geography'}; let h='<div class="bgpick" id="'+pid+'">'; Object.keys(cats).forEach(cat=>{ h+='<span class="bgcath">'+cats[cat]+'</span><div class="bgrow">'; BG.filter(b=>b.cat===cat).forEach(b=>{ let s=activeBg===b.url?' sel':''; h+='<div class="bgc'+s+'" data-url="'+b.url+'"><img src="'+b.th+'" loading="lazy" alt="'+esc(b.name)+'" onerror="this.parentElement.classList.add(\'err\');this.style.display=\'none\'"><span class="bgl">'+esc(b.name)+'</span></div>'; }); h+='</div>'; }); h+='<span class="bgcath">✨ Animated</span><div class="bgrow"><div class="bgc'+(activeBg===SV?' sel':'')+'" data-url="'+SV+'"><div class="surfc">🏄<span>Silver Surfer</span></div><span class="bgl">Silver Surfer</span></div></div></div>'; return h; }
+function initPicker(pid){ let picker=el(pid); if(!picker) return; picker.addEventListener('click',e=>{ let card=e.target.closest('.bgc'); if(!card) return; picker.querySelectorAll('.bgc').forEach(c=>c.classList.remove('sel')); card.classList.add('sel'); applyBg(card.dataset.url); }); }
+
+function showProfile(){
+  if(!cur) return toast('Sign in first','er');
+  let inv=cur.inventory||[];
+  let invHtml = inv.length===0 ? '<p style="color:var(--mu);padding:8px 0">Your inventory is empty.</p>' : (()=>{ let counts={}; inv.forEach(i=>counts[i]=(counts[i]||0)+1); return Object.entries(counts).map(([item,count])=>`<div class="inv-item"><span>${item==='voucher'?'📈':'📦'}</span> <span style="flex:1">${item==='voucher'?'Level Up Voucher':item}</span> <span style="color:var(--a);font-weight:700">${count}</span></div>`).join(''); })();
+  let avH=cur.avatar?'<img src="'+cur.avatar+'" class="avi">':'<div class="avp">👤</div>';
+  setView('<div class="panel"><h2>👤 Profile</h2><div style="text-align:center"><div class="avw"><div class="aura" style="'+auraCSS(cur.profileEffect||'blue')+'"></div>'+avH+'</div><p style="font-family:Syne;font-size:1.1rem;font-weight:700">'+esc(cur.username)+'</p></div><div class="strow"><div class="stc"><div class="sv">'+(cur.level||1)+'</div><div class="sk">Level</div></div><div class="stc"><div class="sv">'+(cur.coins||0)+'</div><div class="sk">🪙 Coins</div></div><hr><span class="lbl">Avatar</span><label class="btn sm">📸 Upload<input type="file" accept="image/*" id="avup" style="display:none"></label><hr><span class="lbl">Inventory</span>'+invHtml+'<hr><button class="btn gh sm" id="pback">← Back</button></div>', home);
+  document.getElementById('pback').onclick = goBack;
+  let avup = el('avup'); if(avup) avup.addEventListener('change',e=>{ let f=e.target.files[0]; if(!f) return; let r=new FileReader(); r.onload=ev=>{ cur.avatar=ev.target.result; users[cur.username]=cur; su(); sc(); refreshBanner(); showProfile(); toast('Avatar updated','ok'); }; r.readAsDataURL(f); });
+}
+function auraCSS(e){ let m={blue:'background:radial-gradient(circle,rgba(79,158,255,.72) 0%,transparent 70%)', purple:'background:radial-gradient(circle,rgba(168,139,250,.72) 0%,transparent 70%)', gold:'background:radial-gradient(circle,rgba(245,200,66,.72) 0%,transparent 70%)', rainbow:'background:conic-gradient(red,orange,yellow,lime,cyan,blue,violet,red);opacity:.45;filter:blur(5px)'}; return m[e]||m.blue; }
+
+function showShop(){
+  if(!cur) return toast('Sign in first','er');
+  setView('<div class="panel"><h2>🛒 Shop</h2><div class="stc"><div class="sv">'+(cur.coins||0)+' 🪙</div></div><div class="si"><h3>📈 Voucher</h3><p>350 🪙</p><button class="btn sm pr" id="sh-vou">Buy</button></div><div class="si"><h3>💙 Blue</h3><p>Free</p><button class="btn sm gh" id="sh-ab">Equip</button></div><div class="si"><h3>💜 Purple</h3><p>2000 🪙</p><button class="btn sm pr" id="sh-ap">Buy</button></div><div class="si"><h3>🌟 Gold</h3><p>3000 🪙</p><button class="btn sm pr" id="sh-ag">Buy</button></div><div class="si"><h3>🌈 Rainbow</h3><p>4500 🪙</p><button class="btn sm pr" id="sh-ar">Buy</button></div><hr><button class="btn gh sm" id="sh-back">← Back</button></div>', home);
+  document.getElementById('sh-vou').onclick = ()=>{ if((cur.coins||0)<350) return toast('Not enough coins','er'); cur.coins-=350; if(!cur.inventory) cur.inventory=[]; cur.inventory.push('voucher'); users[cur.username]=cur; su(); sc(); refreshBar(); toast('Voucher added','ok'); showShop(); };
+  document.getElementById('sh-ab').onclick = ()=>setAura('blue');
+  document.getElementById('sh-ap').onclick = ()=>buyAura('purple',2000);
+  document.getElementById('sh-ag').onclick = ()=>buyAura('gold',3000);
+  document.getElementById('sh-ar').onclick = ()=>buyAura('rainbow',4500);
+  document.getElementById('sh-back').onclick = goBack;
+}
+function setAura(c){ if(!cur) return; cur.profileEffect=c; users[cur.username]=cur; su(); sc(); toast('Aura equipped','ok'); showShop(); }
+function buyAura(c,p){ if((cur.coins||0)<p) return toast('Not enough coins','er'); cur.coins-=p; cur.profileEffect=c; users[cur.username]=cur; su(); sc(); refreshBar(); toast('Aura purchased','ok'); showShop(); }
+
+function showInbox(){
+  if(!cur) return toast('Sign in first','er');
+  cur.inbox = (cur.inbox||[]).filter(m=>!m.timestamp||(Date.now()-m.timestamp)<86400000);
+  users[cur.username]=cur; su();
+  let msgs=cur.inbox.map((m,i)=>`<div class="msg"><div><div class="mfr">${esc(m.from)}</div><div class="mtx">${esc(m.text)}</div>${m.link?`<div><a href="${m.link}" target="_blank" style="color:var(--a)">🔗 Open link</a></div>`:''}${m.avatarItem?`<div><span class="bdg">🖼️ Avatar</span></div>`:''}${m.coins||m.voucher||m.freeLevel?`<div>${m.coins?'<span class="bdg gd">+'+m.coins+' 🪙</span>':''}${m.voucher?'<span class="bdg">📈 Voucher</span>':''}${m.freeLevel?'<span class="bdg">⭐ Level</span>':''}</div>`:''}</div><div>${!m.claimed?'<button class="btn sm pr inbox-claim" data-i="'+i+'">Claim</button>':''}<button class="btn sm dn inbox-del" data-i="'+i+'">🗑️</button></div></div>`).join('');
+  setView('<div class="panel"><h2>📥 Inbox</h2>'+(msgs||'<p>No messages</p>')+'<hr><button class="btn gh sm" id="ib-back">← Back</button></div>', home);
+  document.getElementById('ib-back').onclick = goBack;
+  $app.querySelectorAll('.inbox-claim').forEach(b=>b.addEventListener('click',()=>claimGift(parseInt(b.dataset.i))));
+  $app.querySelectorAll('.inbox-del').forEach(b=>b.addEventListener('click',()=>delMsg(parseInt(b.dataset.i))));
+}
+function claimGift(i){
+  if(!cur) return; let m=cur.inbox[i]; if(m.claimed) return;
+  if(m.voucher){
+    cur.level=(cur.level||1)+1;
+    toast('Level up! 🎉','ok');
+    cur.inbox.splice(i,1); users[cur.username]=cur; su(); sc(); refreshBar(); showInbox();
+    return;
+  }
+  if(m.coins){ cur.coins=(cur.coins||0)+m.coins; toast('+'+m.coins+' coins','ok'); }
+  if(m.freeLevel){ cur.level=(cur.level||1)+1; toast('Level up!','ok'); }
+  if(m.avatarItem){ cur.avatar=m.avatarItem; toast('Avatar updated!','ok'); }
+  cur.inbox.splice(i,1); users[cur.username]=cur; su(); sc(); refreshBar(); showInbox();
+}
+function delMsg(i){ if(!cur) return; cur.inbox.splice(i,1); users[cur.username]=cur; su(); sc(); showInbox(); }
+
+function showSettings(){
+  if(!cur) return toast('Sign in first','er');
+  setView('<div class="panel"><h2>⚙️ Settings</h2><span class="lbl">Background</span>'+buildPicker('spick')+'<hr><button class="btn dn sm" id="s-so">↪ Sign Out</button><button class="btn gh sm" id="s-back">← Back</button></div>', home);
+  initPicker('spick');
+  document.getElementById('s-so').onclick = signOut;
+  document.getElementById('s-back').onclick = goBack;
+}
+
+// ADMIN — STABLE, ALL BUTTONS WORK
+function showAdmin(){
+  if(!adminOn){ toast('Admin not unlocked','er'); return; }
+  adTarget = null;
+  let unames = Object.keys(users);
+  let userOptions = unames.map(u=>`<option value="${esc(u)}">${esc(u)} (Lv.${users[u].level||1})</option>`).join('');
+  let rowsHtml = unames.length===0 ? '<p>No accounts</p>' : unames.map((u,i)=>{ let uu=users[u]||{}; let avH=uu.avatar?`<img src="${uu.avatar}">`:'👤'; return `<div class="urow" data-idx="${i}"><div class="ul"><div class="uav">${avH}</div><div><div class="un">${esc(u)}</div><div class="us">Lv.${uu.level||1} · 🪙${uu.coins||0}</div></div></div><button class="btn sm adm-sel">Select</button></div>`; }).join('');
+  setView(`<div class="panel" style="max-width:680px"><h2>🛡️ Admin Panel</h2>
+    <div class="asec"><h3>👥 Users</h3><div id="adm-ul" style="max-height:180px;overflow-y:auto">${rowsHtml}</div></div>
+    <div class="asec"><h3>🎯 Target</h3><span id="adm-tgt" style="color:var(--a)">🌐 Everyone</span> <button class="btn sm gh" id="adm-rst">Reset</button></div>
+    <div class="asec"><h3>Direct</h3><div class="arow"><input id="adm-c" class="inp" type="number" value="100" style="width:100px"> <button class="btn pr sm" id="adm-bc">Give Coins</button> <button class="btn sm" id="adm-bv">📈 Voucher</button> <button class="btn sm" id="adm-bl">⭐ Level</button></div></div>
+    <div class="asec"><h3>📬 Inbox Gifts</h3>
+      <select id="adm-user-select" class="inp"><option value="">— Select specific user —</option>${userOptions}</select>
+      <input id="adm-m" class="inp" placeholder="Message" value="🎁 Premium Hub Admin Gave You A Gift">
+      <input id="adm-gc" class="inp" type="number" value="0" placeholder="Coins">
+      <input id="adm-link" class="inp" placeholder="Link URL">
+      <input id="adm-avatar" class="inp" placeholder="Avatar URL">
+      <div class="arow"><button class="btn pr sm" id="adm-bsc">Send Coins</button><button class="btn sm" id="adm-bsv">Send Voucher</button><button class="btn sm" id="adm-bsl">Send Level</button><button class="btn sm" id="adm-blink">Send Link</button><button class="btn sm" id="adm-bavatar">Set Avatar</button></div>
+    </div>
+    <div class="asec"><h3>🎁 Giveaway</h3><button class="btn pr sm" id="adm-giveaway">Pick Random & Give 500🪙</button></div>
+    <hr><button class="btn gh sm" id="adm-back">← Close</button></div>`, home);
+  
+  document.getElementById('adm-back').onclick = goBack;
+  let ul = el('adm-ul');
+  if(ul){
+    ul.addEventListener('click', e=>{
+      let btn = e.target.closest('.adm-sel');
+      if(!btn) return;
+      let row = btn.closest('.urow');
+      if(!row) return;
+      let idx = parseInt(row.dataset.idx, 10);
+      let u = unames[idx];
+      if(!u) return;
+      adTarget = u;
+      el('adm-tgt').textContent = '👤 ' + u;
+      ul.querySelectorAll('.urow').forEach(r=>r.classList.remove('sel'));
+      row.classList.add('sel');
+      toast('Target: ' + u, 'ok');
+    });
+  }
+  document.getElementById('adm-rst').onclick = ()=>{
+    adTarget = null;
+    el('adm-tgt').textContent = '🌐 Everyone';
+    if(ul) ul.querySelectorAll('.urow').forEach(r=>r.classList.remove('sel'));
+    toast('Target reset to everyone', 'ok');
+  };
+  
+  function getSelectedUser(){ let sel = el('adm-user-select'); return sel && sel.value ? sel.value : null; }
+  function getTargets(){ let specific = getSelectedUser(); if(specific) return [specific]; return adTarget ? [adTarget] : Object.keys(users); }
+  function tLbl(){ let s = getSelectedUser(); if(s) return s; return adTarget || 'everyone ('+Object.keys(users).length+')'; }
+  
+  document.getElementById('adm-bc').onclick = ()=>{
+    let v = parseInt(el('adm-c').value, 10) || 0;
+    if(v <= 0) return toast('Enter a positive amount', 'er');
+    getTargets().forEach(t=>{ if(users[t]) users[t].coins = (users[t].coins||0) + v; });
+    su(); if(cur && getTargets().includes(cur.username)){ cur = users[cur.username]; sc(); refreshBar(); }
+    toast('+'+v+' coins → '+tLbl(), 'ok');
+  };
+  document.getElementById('adm-bv').onclick = ()=>{
+    getTargets().forEach(t=>{ if(users[t]){ if(!users[t].inventory) users[t].inventory = []; users[t].inventory.push('voucher'); }});
+    su(); toast('Voucher → '+tLbl(), 'ok');
+  };
+  document.getElementById('adm-bl').onclick = ()=>{
+    getTargets().forEach(t=>{ if(users[t]) users[t].level = (users[t].level||1) + 1; });
+    su(); if(cur && getTargets().includes(cur.username)){ cur = users[cur.username]; sc(); refreshBar(); }
+    toast('Level up → '+tLbl(), 'ok');
+  };
+  function adGift(g){
+    getTargets().forEach(t=>{
+      if(!users[t]) return;
+      if(!users[t].inbox) users[t].inbox = [];
+      users[t].inbox.push({...g, timestamp: Date.now(), from: 'Premium Hub Admin'});
+    });
+    su(); if(cur && getTargets().includes(cur.username)){ cur = users[cur.username]; sc(); }
+  }
+  document.getElementById('adm-bsc').onclick = ()=>{
+    let msg = el('adm-m').value.trim() || '🎁 Coins from Premium Hub Admin';
+    let c = parseInt(el('adm-gc').value, 10) || 0;
+    let link = el('adm-link').value.trim();
+    adGift({text: msg, coins: c, link: link||null, claimed: false});
+    toast('Coins gift → '+tLbl(), 'ok');
+  };
+  document.getElementById('adm-bsv').onclick = ()=>{
+    let msg = el('adm-m').value.trim() || '📈 Voucher from Premium Hub Admin';
+    let link = el('adm-link').value.trim();
+    adGift({text: msg, voucher: true, link: link||null, claimed: false});
+    toast('Voucher → '+tLbl(), 'ok');
+  };
+  document.getElementById('adm-bsl').onclick = ()=>{
+    let msg = el('adm-m').value.trim() || '⭐ Level from Premium Hub Admin';
+    let link = el('adm-link').value.trim();
+    adGift({text: msg, freeLevel: true, link: link||null, claimed: false});
+    toast('Level → '+tLbl(), 'ok');
+  };
+  document.getElementById('adm-blink').onclick = ()=>{
+    let msg = el('adm-m').value.trim() || '🔗 Link from Premium Hub Admin';
+    let link = el('adm-link').value.trim();
+    if(!link) return toast('Enter link URL', 'er');
+    adGift({text: msg, link: link, claimed: false});
+    toast('Link sent → '+tLbl(), 'ok');
+  };
+  document.getElementById('adm-bavatar').onclick = ()=>{
+    let avatar = el('adm-avatar').value.trim();
+    if(!avatar) return toast('Enter avatar URL', 'er');
+    let msg = el('adm-m').value.trim() || '🖼️ New avatar from Premium Hub Admin';
+    adGift({text: msg, avatarItem: avatar, claimed: false});
+    toast('Avatar gift → '+tLbl(), 'ok');
+  };
+  document.getElementById('adm-giveaway').onclick = ()=>{
+    let all = Object.keys(users);
+    if(!all.length) return toast('No users', 'er');
+    let winner = all[Math.floor(Math.random() * all.length)];
+    users[winner].coins = (users[winner].coins||0) + 500;
+    if(!users[winner].inbox) users[winner].inbox = [];
+    users[winner].inbox.push({from:'Premium Hub Admin', text:'🎉 You won the giveaway! +500🪙', coins:500, timestamp:Date.now(), claimed:false});
+    su(); toast('🎉 Winner: '+winner+' got 500🪙', 'ok');
+  };
+}
+
+// PROXY WINDOW
+function openProxy(url){
+  let win = document.createElement('div'); win.className='fw';
+  win.innerHTML = `<div class="wb"><span class="wt">🌐 Browser</span><div class="wc"><button class="wb-btn re">↺</button><button class="wb-btn fs">⤢</button><button class="wb-btn cl">✕</button></div></div><div class="wco"><div class="wld"><div class="spin"></div><p>Loading…</p></div><div class="wer"><div class="ei">🔒</div><h3>Could not load</h3><p>Try opening in a new tab.</p><button class="btn sm pr" id="w-nt">Open in new tab ↗</button></div><iframe src="${url}" allow="fullscreen; autoplay; clipboard-write" sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-modals allow-pointer-lock allow-downloads"></iframe></div>`;
+  document.body.appendChild(win);
+  let iframe=win.querySelector('iframe'), loading=win.querySelector('.wld'), errDiv=win.querySelector('.wer'), loaded=false;
+  win.querySelector('.wb-btn.cl').onclick=()=>win.remove();
+  win.querySelector('.wb-btn.fs').onclick=()=>{ if(win.requestFullscreen) win.requestFullscreen(); };
+  win.querySelector('.wb-btn.re').onclick=()=>{ errDiv.classList.remove('show'); loading.classList.remove('gone'); loaded=false; iframe.src=iframe.src; startTimer(); };
+  win.querySelector('#w-nt').onclick=()=>window.open(url,'_blank');
+  function startTimer(){ let to=setTimeout(()=>{ if(!loaded){ loading.classList.add('gone'); errDiv.classList.add('show'); } }, 12000); iframe.addEventListener('load',()=>{ clearTimeout(to); },{once:true}); }
+  iframe.addEventListener('load',()=>{ loaded=true; loading.classList.add('gone'); });
+  iframe.addEventListener('error',()=>{ loading.classList.add('gone'); errDiv.classList.add('show'); });
+  startTimer();
+  makeDraggable(win);
+}
+function makeDraggable(win){ let bar=win.querySelector('.wb'), ox=0,oy=0,drag=false; bar.addEventListener('mousedown',e=>{ drag=true; let r=win.getBoundingClientRect(); ox=e.clientX-r.left; oy=e.clientY-r.top; e.preventDefault(); }); document.addEventListener('mousemove',e=>{ if(!drag) return; win.style.left=(e.clientX-ox)+'px'; win.style.top=(e.clientY-oy)+'px'; }); document.addEventListener('mouseup',()=>{ drag=false; }); }
+
+function showProxies(){
+  let g1=PX1.map((u,i)=>`<div class="pbtn" data-url="${u}">Proxy ${i+1}</div>`).join('');
+  let g2=PX2.map((u,i)=>`<div class="pbtn" data-url="${u}">Alt ${i+1}</div>`).join('');
+  let moreBtns=MORE_PROXIES.map((u,i)=>`<div class="pbtn" data-url="${u}">More ${i+1}</div>`).join('');
+  setView(`<div class="br"><button class="btn gh sm" id="px-back">← Back</button><h2>🔗 Proxies (${MORE_PROXIES.length} more)</h2></div><span class="slbl">Main</span><div class="pg" id="pg1">${g1}</div><span class="slbl">Alt</span><div class="pg" id="pg2">${g2}</div><span class="slbl">➕ More Proxies (${MORE_PROXIES.length})</span><div class="pg" id="pgmore">${moreBtns}</div>`, home);
+  document.getElementById('px-back').onclick = goBack;
+  ['pg1','pg2','pgmore'].forEach(gid=>{ let g=el(gid); if(g) g.addEventListener('click',e=>{ let b=e.target.closest('.pbtn'); if(b) openProxy(b.dataset.url); }); });
+}
+function showApps(){
+  setView('<div class="br"><button class="btn gh sm" id="ab-back">← Back</button><h2>📱 Apps</h2></div><div class="grid"><div class="gbtn" id="app-music"><span class="ic">🎵</span>Music</div><div class="gbtn" id="app-movies"><span class="ic">🎬</span>Movies</div></div>',home);
+  document.getElementById('ab-back').onclick=goBack;
+  // Updated music link
+  document.getElementById('app-music').onclick = ()=>openProxy('https://silkk.edgeone.app/');
+  document.getElementById('app-movies').onclick = ()=>openProxy('https://premium-movies.b-cdn.net/');
+}
+
+// PARTNERS with G.gui added
+function showPartners(){
+  setView(`<div class="br"><button class="btn gh sm" id="pt-back">← Back</button><h2>🤝 Partners</h2></div>
+    <div class="pcard"><div><h3>🏰 Medieval</h3><p>Classic partner site</p></div><button class="btn sm gh" disabled style="opacity:0.6">Soon</button></div>
+    <div class="pcard"><div><h3>🔗 Link Spot</h3><p>Link directory</p></div><button class="btn sm gh" disabled style="opacity:0.6">Soon</button></div>
+    <div class="pcard"><div><h3>🪐 Plutos</h3><p>Partner hub</p></div><button class="btn sm gh" disabled style="opacity:0.6">Soon</button></div>
+    <div class="pcard"><div><h3>☀️ Sunshine OS</h3><p>Online operating system</p></div><button class="btn sm pr" id="pt-sun">Visit ↗</button></div>
+    <div class="pcard"><div><h3>🌀 Chud Portal</h3><p>New partner</p></div><button class="btn sm pr" id="pt-chud">Visit ↗</button></div>
+    <div class="pcard"><div><h3>📘 G.gui</h3><p>Study tips & resources</p></div><button class="btn sm pr" id="pt-ggui">Visit ↗</button></div>
+  `, home);
+  document.getElementById('pt-back').onclick = goBack;
+  document.getElementById('pt-sun').onclick = ()=> openProxy('https://mathisboring.b-cdn.net/');
+  document.getElementById('pt-chud').onclick = ()=> openProxy('https://tung-isachud.b-cdn.net/');
+  document.getElementById('pt-ggui').onclick = ()=> openProxy('https://ggui-studytips.b-cdn.net/');
+}
+
+// Stars
+(function(){ let c=$stc,ctx=c.getContext('2d'),W,H,stars=[]; function resize(){ W=c.width=innerWidth; H=c.height=innerHeight; stars=Array.from({length:Math.floor(W*H/3200)},()=>({x:Math.random()*W,y:Math.random()*H,r:Math.random()*2+.5,s:.06+Math.random()*.28,a:Math.random()*Math.PI*2,tw:.004+Math.random()*.009})); } function draw(){ if(!c.classList.contains('on')){ requestAnimationFrame(draw); return; } ctx.clearRect(0,0,W,H); ctx.fillStyle='#fff'; stars.forEach(s=>{ s.x+=s.s*.18; s.a+=s.tw; if(s.x>W+10){s.x=-5;s.y=Math.random()*H;} ctx.globalAlpha=.38+.35*Math.sin(s.a); ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill(); }); ctx.globalAlpha=1; requestAnimationFrame(draw); } window.addEventListener('resize',resize); resize(); draw(); })();
+
+document.getElementById('back-btn').addEventListener('click', goBack);
+document.getElementById('so-btn').addEventListener('click', signOut);
+document.getElementById('nav-profile').addEventListener('click', showProfile);
+document.getElementById('nav-shop').addEventListener('click', showShop);
+document.getElementById('nav-inbox').addEventListener('click', showInbox);
+document.getElementById('nav-settings').addEventListener('click', showSettings);
+
+document.getElementById('vtag').addEventListener('click', function(){
+  vcnt++; if(vtmr) clearTimeout(vtmr); vtmr=setTimeout(()=>vcnt=0,2000);
+  if(vcnt>=5){ vcnt=0; clearTimeout(vtmr); let code=prompt('Admin code:'); if(code==='8888'){ adminOn=true; if(!el('bar-admin')){ let ab=document.createElement('span'); ab.id='bar-admin'; ab.className='pill'; ab.textContent='🛡️ Admin'; ab.addEventListener('click',showAdmin); document.getElementById('barr').appendChild(ab); } toast('Admin unlocked ✦','ok'); showAdmin(); } else if(code!==null) toast('Wrong code','er'); }
+});
+
+load();
+if(activeBg===SV){ startSurfer(); } else { $bga.style.backgroundImage="url('"+activeBg+"')"; $stc.classList.toggle('on', activeBg===SV); }
+if(cur){ if(cur.resetOnLoad){ cur=null; sc(); refreshBar(); refreshBanner(); showLogin(); } else { refreshBar(); refreshBanner(); home(); } } else { refreshBar(); refreshBanner(); showLogin(); }
+})();
+</script>
+</body>
+</html>
