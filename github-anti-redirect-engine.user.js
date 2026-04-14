@@ -3,7 +3,7 @@
 
   const REPO_BASE = "https://raw.githubusercontent.com/BWeducation/premiumopensource/main";
   const MANIFEST_URL = REPO_BASE + "/folder_structure.txt";
-  const START_PAGE = "index.html";
+  const START_PAGE = "premium.html";
 
   let assetMap = {};
   let isRunning = false;
